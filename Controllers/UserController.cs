@@ -1,6 +1,7 @@
 ﻿using CuraGames.Enums;
 using CuraGames.Interface;
 using CuraGames.Models;
+using CuraGames.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,13 +21,15 @@ namespace CuraGames.Controllers
         private IConfiguration _configuration;
         private readonly IAuth _iAuth;
         private readonly IUsers _iuser;
+        private readonly CurrentUser _cuser;
 
 
-        public UserController(IConfiguration config, IAuth iAuth, IUsers iuser)
+        public UserController(IConfiguration config, IAuth iAuth, IUsers iuser, CurrentUser user)
         {
             _configuration = config;
             _iAuth = iAuth;
             _iuser = iuser;
+            _cuser = user;
         }
 
         // POST api/user/login
@@ -67,17 +70,7 @@ namespace CuraGames.Controllers
         [HttpPost("profile")]
         public ActionResult Profile()
         {
-            var identity = User.Identity as ClaimsIdentity;
-            if (identity != null)
-            {
-                IEnumerable<Claim> claims = identity.Claims;
-                var name = claims.Where(p => p.Type == "UserName").FirstOrDefault()?.Value;
-                return Ok(_iuser.GetUser(name));
-            }
-            else
-            {
-                return BadRequest("Invalid request");
-            }
+            return Ok(_iuser.GetUser(_cuser.CurrentUserName));
         }
     }
 }

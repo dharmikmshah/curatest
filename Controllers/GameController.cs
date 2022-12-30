@@ -1,4 +1,5 @@
 ﻿using CuraGames.Interface;
+using CuraGames.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -11,30 +12,20 @@ namespace CuraGames.Controllers
     public class GameController : Controller
     {
         private readonly IGames _iGames;
+        private readonly CurrentUser _cuser;
 
 
-        public GameController(IGames iGames)
+        public GameController(IGames iGames, CurrentUser currentUser)
         {
             _iGames = iGames;
+            _cuser = currentUser;
         }
 
         [Authorize]
         [HttpGet("getavailablegames")]
         public ActionResult GetAvailableGames()
         {
-            var identity = User.Identity as ClaimsIdentity;
-            if (identity != null)
-            {
-                IEnumerable<Claim> claims = identity.Claims;
-                var regionAccess = claims.Where(p => p.Type == "RegionAccess").FirstOrDefault()?.Value;
-                List<string> regions = new List<string>();
-                if (!string.IsNullOrEmpty(regionAccess)) { regions = regionAccess.Split(",").ToList(); }
-                return Ok(_iGames.GetGamesByRegion(regions));
-            }
-            else
-            {
-                return BadRequest("Invalid request");
-            }
+            return Ok(_iGames.GetGamesByRegion(_cuser.CurrentUserRegions));
         }
     }
 }

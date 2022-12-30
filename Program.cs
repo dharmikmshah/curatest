@@ -6,6 +6,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Log4Net.AspNetCore;
+using CuraGames.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,8 +14,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddTransient<IAuth, AuthRepository>();
 builder.Services.AddTransient<IGames, GamesRepository>();
 builder.Services.AddTransient<IUsers, UsersRepository>();
+builder.Services.AddTransient<CurrentUser>();
 
 builder.Services.AddControllers();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
     options.RequireHttpsMetadata = false;
