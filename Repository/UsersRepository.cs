@@ -6,6 +6,13 @@ namespace CuraGames.Repository
 {
     public class UsersRepository : IUsers
     {
+        private ILogger<UsersRepository> _logger;
+
+        public UsersRepository(ILogger<UsersRepository> logger)
+        {
+            _logger = logger;
+        }
+
         #region Private Methods
         List<UserInfo> _users = new List<UserInfo>()
         {
@@ -36,6 +43,15 @@ namespace CuraGames.Repository
                 UserRole=UserRole.Player.ToString(),
                 RegionsAccess = new List<string>{GameRegion.Board.ToString(), GameRegion.Vip.ToString() }
             },
+            new UserInfo(){
+                FirstName = "Player",
+                LastName="VIP",
+                UserId=1,
+                Password="Player@123",
+                Username="player",
+                UserRole=UserRole.Player.ToString(),
+                RegionsAccess = new List<string>{ GameRegion.Vip.ToString() }
+            },
         };
         #endregion
 
@@ -51,7 +67,7 @@ namespace CuraGames.Repository
             }
             catch (Exception ex)
             {
-
+                _logger.LogError(ex, null, null);
             }
             return null;
         }

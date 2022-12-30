@@ -6,10 +6,12 @@ namespace CuraGames.Repository
     public class AuthRepository : IAuth
     {
         private readonly IUsers _iUsers;
+        private ILogger<AuthRepository> _logger;
 
-        public AuthRepository(IUsers iusers)
+        public AuthRepository(IUsers iusers, ILogger<AuthRepository> logger)
         {
             _iUsers = iusers;
+            _logger = logger;
         }
 
         public UserInfo Authenticate(LoginModel model)
@@ -19,12 +21,12 @@ namespace CuraGames.Repository
                 var user = _iUsers.GetUser(model.UserName);
                 if (user != null && user.Password == model.Password)
                 {
-                   return user;
+                    return user;
                 }
             }
             catch (Exception ex)
             {
-                throw;
+                _logger.LogError(ex, null, null);
             }
             return null;
         }

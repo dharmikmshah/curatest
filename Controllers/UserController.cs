@@ -53,7 +53,7 @@ namespace CuraGames.Controllers
                 _configuration["Jwt:Issuer"],
                 _configuration["Jwt:Audience"],
                 claims,
-                expires: DateTime.UtcNow.AddMinutes(30),
+                expires: DateTime.UtcNow.AddMinutes(Convert.ToDouble(_configuration["Jwt:Timeout"])),
                 signingCredentials: signIn);
 
             return Ok(new JwtSecurityTokenHandler().WriteToken(token));
