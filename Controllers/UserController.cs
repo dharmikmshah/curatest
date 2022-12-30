@@ -1,8 +1,11 @@
-﻿using CuraGames.Interface;
+﻿using CuraGames.Enums;
+using CuraGames.Interface;
 using CuraGames.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Principal;
@@ -43,7 +46,7 @@ namespace CuraGames.Controllers
                         new Claim("UserId", user.UserId.ToString()),
                         new Claim("DisplayName",$"{user.LastName},{user.FirstName}"),
                         new Claim("UserName", user.Username),
-                        new Claim("Role",user.UserRole),
+                        new Claim(ClaimTypes.Role,user.UserRole),
                         new Claim("RegionAccess",string.Join(",", user.RegionsAccess)),
                     };
 
@@ -60,9 +63,9 @@ namespace CuraGames.Controllers
         }
 
 
-        [Authorize]
-        [HttpPost("getall")]
-        public ActionResult GetAll()
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpPost("profile")]
+        public ActionResult Profile()
         {
             var identity = User.Identity as ClaimsIdentity;
             if (identity != null)

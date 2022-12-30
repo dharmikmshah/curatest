@@ -19,8 +19,8 @@ namespace CuraGames.Controllers
         }
 
         [Authorize]
-        [HttpGet("getall")]
-        public ActionResult GetAll()
+        [HttpGet("getavailablegames")]
+        public ActionResult GetAvailableGames()
         {
             var identity = User.Identity as ClaimsIdentity;
             if (identity != null)
